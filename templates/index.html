@@ -1,0 +1,64 @@
+gy<html >
+<head>
+    <title>TODO LIST</title>
+    <style>
+        .hidden{
+            display:none;
+        }
+    </style>
+</head>
+<body>
+     <!-- (does not involve page refresh the asynchronous part of it -->
+     <form id ='form'>
+        <label>Enter a Todo list item</label>
+        <input type="text"  id="description" name="description" />
+        <input type="submit" value="Create" />
+     </form>
+        <ul id='todo'>
+           <!-- using parameters from render_template function call that uses jinja underneath -->
+          {% for d in data %}
+            <li>{{ d.description }}</li>
+            {% endfor %} 
+        </ul>
+        <div class= 'hidden' id = 'error'>Something went wrong!</div>
+    <script>
+        document.getElementById('form').onsubmit = function(e){
+    e.preventDefault();
+    if(description){
+fetch('/todos/create',{
+    method: 'POST',
+    body : JSON.stringify({'description': document.getElementById('description').value}),
+    headers: { 'Content-Type': 'application/json'}
+})
+.then(function(response){
+    return response.json();
+})
+.then(function(jsonresponse){
+    console.log(jsonresponse);
+    const liItem = document.createElement('LI');
+    liItem.innerHTML= jsonResponse['description'];
+    document.getElementById('todo').appendChild(liItem);
+    document.getElementById('error').classname = 'hidden';
+    window.location.reload(true)
+})
+.catch(function(){
+    document.getElementById('error').classname = '';
+})
+     } }
+    </script>   
+</body>
+</html>
+
+<!-- this is the synchronous way of doing things(this causes a refresh to the browser),on top is using fetch which is an asynchronous stuff -->
+<!-- the view part -->
+<!-- <form action="/todos/create" method="post">
+    <label>Enter a Todo list item</label>
+    <input type="text" name="description" />
+    <input type="submit" value="create" />
+    <ul>
+     using parameters from render_template function call that uses jinja underneath -->
+        <!-- {% for d in data %}
+        <li>{{ d.description }}</li>
+        {% endfor %} 
+    </ul>
+   </form> -->
